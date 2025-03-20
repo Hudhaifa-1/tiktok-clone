@@ -29,7 +29,7 @@ const route = useRoute();
       <div class="cursor-pointer pt-3 lg:pt-0">
         <MenuItemFollow />
       </div>
-      <button class="hidden lg:block text-primary_bg pt-1.5 pl-2 text-small">
+      <button class="hidden lg:block text-primary pt-1.5 pl-2 text-small">
         See all
       </button>
 
@@ -44,7 +44,7 @@ const route = useRoute();
       <div class="cursor-pointer pt-3 lg:pt-0">
         <MenuItemFollow />
       </div>
-      <button class="hidden lg:block text-primary_bg pt-1.5 pl-2 text-small">
+      <button class="hidden lg:block text-primary pt-1.5 pl-2 text-small">
         See more
       </button>
 

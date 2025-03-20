@@ -5,7 +5,8 @@ export default {
     extend: {
       colors: {
         //# backgrounds
-        primary_bg: '#F02C56',
+        primary: '#F02C56',
+        primary_hover: '#ffeef2',
         gray_bg: '#F1F1F2',
         primary_hover_bg: '#e52c54',
         gray_hover_bg: '#f3f4f6',
