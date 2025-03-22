@@ -9,7 +9,7 @@ let isLoaded = ref(false);
 let videoListener = null;
 
 const isVideoLoaded = () => {
-    if (video.value) {
+  if (video.value) {
     video.value.load();
 
     videoListener = (e) => {
@@ -29,7 +29,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    video.value.removeEventListener("loadeddata", videoListener);
+  video.value.removeEventListener("loadeddata", videoListener);
   video.value.pause();
   video.value.currentTime = 0;
   video.value.src = "";
