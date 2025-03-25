@@ -1,6 +1,7 @@
 <script setup>
-import Avatar from './Avatar.vue';
+import Avatar from "./Avatar.vue";
 
+const { $userStore, $generalStore } = useNuxtApp();
 const showMenu = ref(false);
 const route = useRoute();
 </script>
@@ -36,17 +37,18 @@ const route = useRoute();
       <div
         class="flex items-center justify-end gap-3 min-w-[275px] max-w-[320px] w-full"
       >
-       <NuxtLink to="/upload">
-        <button
-          class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg"
-        >
-          <Icon name="mdi:plus" class="text-black_font" size="22" />
-          <span class="px-2 font-medium text-normal">Upload</span>
-        </button>
-       </NuxtLink>
-
-        <div v-if="false" class="flex items-center">
+        <NuxtLink to="/upload">
           <button
+            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg"
+          >
+            <Icon name="mdi:plus" class="text-black_font" size="22" />
+            <span class="px-2 font-medium text-normal">Upload</span>
+          </button>
+        </NuxtLink>
+
+        <div v-if="!$userStore.id" class="flex items-center">
+          <button
+            @click="$generalStore.isLoginOpen = true"
             class="flex items-center bg-primary text-white border rounded-md px-3 py-[6px] hover:bg-primary_hover_bg"
           >
             <span class="px-2 font-medium text-normal">Log in</span>
@@ -54,7 +56,7 @@ const route = useRoute();
           <Icon name="mdi:dots-vertical" class="text-[#161724]" size="25" />
         </div>
 
-        <div class="flex items-center">
+        <div v-else class="flex items-center">
           <Icon
             class="ml-1 mr-4 text-[#161724]"
             name="carbon:send-alt-filled"
@@ -67,7 +69,11 @@ const route = useRoute();
           />
           <div class="relative">
             <button @click="showMenu = !showMenu" class="mt-1">
-              <Avatar image-src="https://picsum.photos/id/83/300/300" image-width="33" image-height="33" />
+              <Avatar
+                image-src="https://picsum.photos/id/83/300/300"
+                image-width="33"
+                image-height="33"
+              />
             </button>
 
             <div
