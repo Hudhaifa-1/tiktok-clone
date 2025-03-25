@@ -9,5 +9,5 @@ const {isLoginOpen, isEditProfileOpen} = storeToRefs($generalStore);
   <NuxtPage />
 
   <AuthOverlay v-if="isLoginOpen" />
-  <EditProfileOverlay v-if="!isEditProfileOpen" />
+  <EditProfileOverlay v-if="isEditProfileOpen" />
 </template>

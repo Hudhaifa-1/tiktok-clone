@@ -2,6 +2,8 @@
 import PostUser from '~/components/PostUser.vue';
 import MainLayout from '~/layouts/MainLayout.vue';
 
+const {$generalStore} = useNuxtApp()
+
 </script>
 
 <template>
@@ -12,7 +14,7 @@ import MainLayout from '~/layouts/MainLayout.vue';
                 <div class="ml-5 w-full">
                     <div class="text-[30px] font-bold truncate">User name</div>
                     <div class="text-[18px] truncate">User name</div>
-                    <button v-if="true" class="flex items-center rounded-md py-1.5 px-3.5 mt-3 text-normal font-semibold border hover:bg-gray_hover_bg">
+                    <button v-if="true" @click="$generalStore.isEditProfileOpen = true" class="flex items-center rounded-md py-1.5 px-3.5 mt-3 text-normal font-semibold border hover:bg-gray_hover_bg">
                         <Icon class="mt-0.5 mr-1" name="mdi:pencil" size="18" />
                         <div>Edit profile</div>
                     </button>
