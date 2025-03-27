@@ -12,7 +12,7 @@ const timoutErrorVisibility = () => {
   errorTimout.value = setTimeout(() => {
     isErrorVisible.value = false;
     error.value = "";
-  }, 3000);
+  }, 3000); 
 };
 
 watch(
