@@ -4,6 +4,33 @@ import Avatar from "./Avatar.vue";
 const { $userStore, $generalStore } = useNuxtApp();
 const showMenu = ref(false);
 const route = useRoute();
+const router = useRouter();
+
+const isLoggedIn = () => {
+  if ($userStore.id) {
+    router.push("/upload");
+  } else {
+    $generalStore.isLoginOpen = true;
+  }
+};
+
+const logout = () => {
+  try {
+    $userStore.logout();
+    router.push("/");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+onMounted(()=> {
+  document.addEventListener('mouseup', function(e){
+    let popupMenu = document.getElementById('PopupMenu');
+    if(popupMenu && !popupMenu.contains(e.target)){
+      showMenu.value = false
+    }
+  })
+})
 </script>
 
 <template>
@@ -39,6 +66,7 @@ const route = useRoute();
       >
         <NuxtLink to="/upload">
           <button
+          @click="isLoggedIn"
             class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg"
           >
             <Icon name="mdi:plus" class="text-black_font" size="22" />
@@ -70,7 +98,7 @@ const route = useRoute();
           <div class="relative">
             <button @click="showMenu = !showMenu" class="mt-1">
               <Avatar
-                image-src="https://picsum.photos/id/83/300/300"
+                :image-src="$userStore.image"
                 image-width="33"
                 image-height="33"
               />
@@ -82,6 +110,7 @@ const route = useRoute();
               class="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl border top-[43px] -right-2"
             >
               <NuxtLink
+              :to="`/profile/${$userStore.id}`"
                 @click="showMenu = false"
                 class="flex items-center justify-start py-3 px-2 hover:bg-gray_hover_bg cursor-pointer"
               >
@@ -89,6 +118,7 @@ const route = useRoute();
                 <span class="pl-2 font-semibold text-sm">Profile</span>
               </NuxtLink>
               <div
+              @click="logout"
                 class="flex items-center justify-start py-3 px-1.5 hover:bg-gray_hover_bg cursor-pointer border-t"
               >
                 <Icon name="ic:outline-login" size="20" />

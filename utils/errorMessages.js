@@ -1,0 +1,1 @@
+export const notValidEmailMessage = 'The email field must be a valid email address.';
