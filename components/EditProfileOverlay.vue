@@ -5,7 +5,9 @@ import "vue-advanced-cropper/dist/style.css";
 import {storeToRefs} from 'pinia'
 const {$userStore, $generalStore, $profileStore } = useNuxtApp();
 const {name, bio, image} = storeToRefs($userStore)
+const {error} = storeToRefs($generalStore)
 
+const route = useRoute()
 let file = ref(null);
 let cropper = ref(null);
 let uploadedImage = ref(null);
@@ -18,6 +20,51 @@ const getUploadedImage = (event) => {
   file.value = event.target.files[0];
   uploadedImage.value = URL.createObjectURL(file.value);
 };
+
+const cropAndUpdateImage = async ()=> {
+  const {coordinates} = cropper.value.getResult();
+
+  let data = new FormData();
+
+  data.append('image', file.value || '')
+  data.append('height', coordinates.height || '')
+  data.append('width', coordinates.width || '')
+  data.append('left', coordinates.left || '')
+  data.append('top', coordinates.top || '')
+
+  try{
+    await $userStore.updateUserImage(data)
+    await $userStore.getUser()
+    await $profileStore.getProfile(route.params.id)
+
+    $generalStore.updateSideMenuImage($generalStore.suggested, $userStore)
+    $generalStore.updateSideMenuImage($generalStore.following, $userStore)
+
+    userImage.value = image.value
+    uploadedImage.value = null
+    
+  }catch(error){
+    error.value = error.response.data.errors[0]
+  }
+}
+
+const updateUserInfo = async ()=> {
+  try{
+    await $userStore.updateUser(userName.value, userBio.value)
+    await $userStore.getUser()
+    await $profileStore.getProfile(route.params.id)
+
+    userName.value = name.value
+    userBio.value = bio.value
+
+    setTimeout(() => {
+      $generalStore.isEditProfileOpen = false
+    }, 100);
+
+  }catch(error){
+    error.value = error.response.data.errors[0]
+  }
+}
 
 onMounted(() => {
   userName.value = name.value
@@ -79,7 +126,7 @@ watch(() => userBio.value, () => {
               <label for="image" class="relative cursor-pointer">
                 <img
                   class="rounded-full"
-                  src="https://picsum.photos/id/8/300/300"
+                  :src="image"
                   width="95"
                 />
                 <div
@@ -168,6 +215,16 @@ watch(() => userBio.value, () => {
       <div id="ButtonSection" class="absolute p-5 left-0 bottom-0 border-1 border-t-gray-300 w-full">
         <div id="UpdateInfoButtons" v-if="!uploadedImage" class="flex items-center justify-end">
           <button @click="$generalStore.isEditProfileOpen = false" class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg">
+            <span class="px-2 font-medium text-normal">Cancel</span>
+          </button>
+
+          <button :disabled="!isUpdated" @click="updateUserInfo" :class="!isUpdated ? 'bg-gray-200' : 'bg-primary'" class="flex items-center text-white border rounded-md ml-3 px-3 py-[6px]">
+            <span class="mx-4 font-medium text-normal">Applay</span>
+          </button>
+        </div>
+
+        <div id="CropperButtons" v-else class="flex items-center justify-end">
+          <button @click="uploadedImage = null" class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg">
             <span class="px-2 font-medium text-normal">Cancel</span>
           </button>
 

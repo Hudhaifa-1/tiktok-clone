@@ -1,10 +1,11 @@
 <script setup>
 import { storeToRefs } from "pinia";
+import BaseToast from "./components/Base/BaseToast.vue";
 
 const { $generalStore, $userStore } = useNuxtApp();
-const { isLoginOpen, isEditProfileOpen } = storeToRefs($generalStore);
+const { isLoginOpen, isEditProfileOpen, error } = storeToRefs($generalStore);
 
-onMounted(async () => {
+const prepareApp = async ()=> {
   $generalStore.bodySwitch(false);
   isLoginOpen.value = false;
   isEditProfileOpen.value = false;
@@ -16,8 +17,12 @@ onMounted(async () => {
       $userStore.getUser();
     }
   } catch (error) {
-    console.log(error);
+    error.value = error.response.data.errors[0]
   }
+}
+
+onMounted(() => {
+  prepareApp()
 });
 
 watch(
@@ -32,7 +37,7 @@ watch(
 
 <template>
   <NuxtPage />
-
+  <BaseToast :error="error" />
   <AuthOverlay v-if="isLoginOpen" />
   <EditProfileOverlay v-if="isEditProfileOpen" />
 </template>

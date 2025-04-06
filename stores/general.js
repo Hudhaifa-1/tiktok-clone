@@ -14,17 +14,33 @@ export const useGeneralStore = defineStore("general", {
     posts: null,
     suggested: null,
     following: null,
+    error: null,
   }),
 
   actions: {
     bodySwitch(val) {
-        console.log(val);
-        
+      console.log(val);
+
       if (val) {
         document.body.style.overflow = "hidden";
         return;
       }
       document.body.style.overflow = "visible";
+    },
+
+    setBackUrl(url) {
+      this.isBackUrl = url;
+    },
+
+    updateSideMenuImage(array, user) {
+      if (array) {
+        for (let i = 0; i < array.length; i++) {
+          const res = array[i];
+          if (res.id == user.id) {
+            res.image = user.image;
+          }
+        }
+      }
     },
 
     async hasSessionExpired() {

@@ -1,6 +1,8 @@
 <script setup>
 defineProps(["post"]);
 
+const { $generalStore } = useNuxtApp();
+
 const route = useRoute();
 const router = useRouter();
 
@@ -24,6 +26,24 @@ const isVideoLoaded = () => {
   }
 };
 
+const isHover = (bool) => {
+  if (video.value) {
+    if (bool) {
+      video.value.play();
+    } else {
+      video.value.pause();
+    }
+  }
+};
+
+const displayPost = (post) => {
+  $generalStore.setBackUrl("/profile/" + route.params.id);
+  $generalStore.selectedPost = null;
+  setTimeout(() => {
+    router.push(`/post/${post.id}`);
+  }, 300);
+};
+
 onMounted(() => {
   isVideoLoaded();
 });
@@ -34,20 +54,11 @@ onBeforeUnmount(() => {
   video.value.currentTime = 0;
   video.value.src = "";
 });
-
-const isHover = (bool) => {
-  if (video.value) {
-    if (bool) {
-      video.value.play();
-    } else {
-      video.value.pause();
-    }
-  }
-};
 </script>
 
 <template>
   <div
+    @click="displayPost(post)"
     @mouseenter="isHover(true)"
     @mouseleave="isHover(false)"
     class="relative brightness-90 hover:brightness-[1.1] cursor-pointer"
@@ -68,12 +79,12 @@ const isHover = (bool) => {
         muted
         loop
         class="aspect-[3/4] object-cover rounded-md"
-        src="/quran.mp4"
+        :src="post.video"
       ></video>
     </div>
     <div class="px-1">
       <div class="text-gray-700 text-normal pt-1 break-words">
-        This is some text
+        {{ post.text }}
       </div>
       <div
         class="flex gap-1 items-center -ml-1 text-gray-600 font-bold text-xs"

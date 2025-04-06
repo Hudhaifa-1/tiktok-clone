@@ -1,6 +1,11 @@
 <script setup>
 import UploadError from "~/components/UploadError.vue";
 import UploadLayout from "~/layouts/UploadLayout.vue";
+import BaseLoading from "~/components/Base/BaseLoading.vue";
+import BaseToast from "~/components/Base/BaseToast.vue";
+
+const { $userStore } = useNuxtApp();
+const router = useRouter();
 
 let file = ref(null);
 let fileDisplay = ref(null);
@@ -36,10 +41,10 @@ const onDrop = (event) => {
   );
 
   if (extenstion !== "mp4") {
-    discard()
+    discard();
     errorType.value = "file";
     setTimeout(() => {
-        errorType.value = null;
+      errorType.value = null;
     }, 3000);
     return;
   }
@@ -52,6 +57,40 @@ const discard = () => {
   caption.value = "";
 };
 
+const createPost = async () => {
+  errors.value = null;
+
+  let data = new FormData();
+
+  data.append("video", fileData.value);
+  data.append("text", caption.value);
+
+  if (fileData.value && caption.value) {
+    isUploading.value = true;
+
+    try {
+      let res = await $userStore.createPost(data);
+      if (res.status === 200) {
+        setTimeout(() => {
+          isUploading.value = false;
+          router.push("/profile/" + $userStore.id);
+        }, 1000);
+      }
+    } catch (error) {
+      isUploading.value = false;
+      errors.value = error.response.data.errors;
+    }
+  }
+};
+
+const destructError = computed(() => {
+  if (errors.value) {
+    if (errors.value.video) return errors.value.video[0];
+    if (errors.value.text) return errors.value.text[0];
+  }
+  return null
+})
+
 const clearVideo = () => {
   file.value = null;
   fileDisplay.value = null;
@@ -60,8 +99,10 @@ const clearVideo = () => {
 </script>
 
 <template>
-    <UploadError :error-type="errorType" />
-  <UploadLayout>
+  <UploadError :error-type="errorType" />
+  <BaseToast :error="destructError" />
+  <BaseLoading v-if="isUploading" />
+  <UploadLayout >
     <div
       class="w-full mt-[70px] mb-[20px] bg-white shadow-lg rounded-md py-6 px-4 md:px-10"
     >
@@ -192,6 +233,7 @@ const clearVideo = () => {
               Discard
             </button>
             <button
+            @click="createPost"
               class="px-10 py-2.5 mt-8 border text-[16px] text-white bg-primary rounded-sm"
             >
               Post
