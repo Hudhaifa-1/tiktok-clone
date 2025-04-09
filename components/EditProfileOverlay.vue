@@ -2,12 +2,12 @@
 import { Cropper, CircleStencil } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 
-import {storeToRefs} from 'pinia'
-const {$userStore, $generalStore, $profileStore } = useNuxtApp();
-const {name, bio, image} = storeToRefs($userStore)
-const {error} = storeToRefs($generalStore)
+import { storeToRefs } from "pinia";
+const { $userStore, $generalStore, $profileStore } = useNuxtApp();
+const { name, bio, image } = storeToRefs($userStore);
+const { error } = storeToRefs($generalStore);
 
-const route = useRoute()
+const route = useRoute();
 let file = ref(null);
 let cropper = ref(null);
 let uploadedImage = ref(null);
@@ -21,78 +21,87 @@ const getUploadedImage = (event) => {
   uploadedImage.value = URL.createObjectURL(file.value);
 };
 
-const cropAndUpdateImage = async ()=> {
-  const {coordinates} = cropper.value.getResult();
+const cropAndUpdateImage = async () => {
+  const { coordinates } = cropper.value.getResult();
 
   let data = new FormData();
 
-  data.append('image', file.value || '')
-  data.append('height', coordinates.height || '')
-  data.append('width', coordinates.width || '')
-  data.append('left', coordinates.left || '')
-  data.append('top', coordinates.top || '')
+  data.append("image", file.value || "");
+  data.append("height", coordinates.height || "");
+  data.append("width", coordinates.width || "");
+  data.append("left", coordinates.left || "");
+  data.append("top", coordinates.top || "");
 
-  try{
-    await $userStore.updateUserImage(data)
-    await $userStore.getUser()
-    await $profileStore.getProfile(route.params.id)
+  try {
+    await $userStore.updateUserImage(data);
+    await $userStore.getUser();
+    await $profileStore.getProfile(route.params.id);
 
-    $generalStore.updateSideMenuImage($generalStore.suggested, $userStore)
-    $generalStore.updateSideMenuImage($generalStore.following, $userStore)
-
-    userImage.value = image.value
-    uploadedImage.value = null
-    
-  }catch(error){
-    error.value = error.response.data.errors[0]
+    userImage.value = image.value;
+    uploadedImage.value = null;
+  } catch (e) {
+    error.value = e.response.data.message
+      ? e.response.data.message
+      : e.response.data.error;
   }
-}
+};
 
-const updateUserInfo = async ()=> {
-  try{
-    await $userStore.updateUser(userName.value, userBio.value)
-    await $userStore.getUser()
-    await $profileStore.getProfile(route.params.id)
+const updateUserInfo = async () => {
+  try {
+    await $userStore.updateUser(userName.value, userBio.value);
+    await $userStore.getUser();
+    await $profileStore.getProfile(route.params.id);
 
-    userName.value = name.value
-    userBio.value = bio.value
+    userName.value = name.value;
+    userBio.value = bio.value;
 
     setTimeout(() => {
-      $generalStore.isEditProfileOpen = false
+      $generalStore.isEditProfileOpen = false;
     }, 100);
-
-  }catch(error){
-    error.value = error.response.data.errors[0]
+  } catch (e) {
+    error.value = e.response.data.message
+      ? e.response.data.message
+      : e.response.data.error;
   }
-}
+};
 
 onMounted(() => {
-  userName.value = name.value
+  userName.value = name.value;
   userBio.value = bio.value;
-  userImage.value = image.value
-})
+  userImage.value = image.value;
+});
 
-watch(() => userName.value, () => {
-  if(!userName.value || userName.value == name.value){
-    isUpdated.value = false
-  }else{    
-    isUpdated.value = true
+watch(
+  () => userName.value,
+  () => {
+    if (!userName.value || userName.value == name.value) {
+      isUpdated.value = false;
+    } else {
+      isUpdated.value = true;
+    }
   }
-})
+);
 
-watch(() => userBio.value, () => {
-  if(!userBio.value || userBio.value.length < 1){
-    isUpdated.value = false
-  }else{    
-    isUpdated.value = true
+watch(
+  () => userBio.value,
+  () => {
+    if (
+      !userBio.value ||
+      userBio.value.length < 1 ||
+      userBio.value == bio.value
+    ) {
+      isUpdated.value = false;
+    } else {
+      isUpdated.value = true;
+    }
   }
-})
+);
 </script>
 
 <template>
   <div
     id="EditProfileOverlay"
-    class="fixed flex justify-center pt-14 md:pt-[105px] z-50 top-0 w-full h-full bg-black/50 overflow-auto"
+    class="fixed flex justify-center pt-14 md:pt-[105px] z-40 top-0 w-full h-full bg-black/50 overflow-auto"
   >
     <div
       class="relative bg-white w-full max-w-[700px] sm:h-[580px] h-[655px] mx-3 p-4 rounded-lg mb-10"
@@ -124,11 +133,7 @@ watch(() => userBio.value, () => {
 
             <div class="flex items-center justify-center sm:-mt-6">
               <label for="image" class="relative cursor-pointer">
-                <img
-                  class="rounded-full"
-                  :src="image"
-                  width="95"
-                />
+                <img class="rounded-full" :src="image" width="95" />
                 <div
                   class="absolute bottom-0 right-0 rounded-full bg-white shadow-xl border p-1 border-gray-300 inline-block w-[32px]"
                 >
@@ -212,23 +217,44 @@ watch(() => userBio.value, () => {
         </div>
       </div>
 
-      <div id="ButtonSection" class="absolute p-5 left-0 bottom-0 border-1 border-t-gray-300 w-full">
-        <div id="UpdateInfoButtons" v-if="!uploadedImage" class="flex items-center justify-end">
-          <button @click="$generalStore.isEditProfileOpen = false" class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg">
+      <div
+        id="ButtonSection"
+        class="absolute p-5 left-0 bottom-0 border-1 border-t-gray-300 w-full"
+      >
+        <div
+          id="UpdateInfoButtons"
+          v-if="!uploadedImage"
+          class="flex items-center justify-end"
+        >
+          <button
+            @click="$generalStore.isEditProfileOpen = false"
+            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg"
+          >
             <span class="px-2 font-medium text-normal">Cancel</span>
           </button>
 
-          <button :disabled="!isUpdated" @click="updateUserInfo" :class="!isUpdated ? 'bg-gray-200' : 'bg-primary'" class="flex items-center text-white border rounded-md ml-3 px-3 py-[6px]">
+          <button
+            :disabled="!isUpdated"
+            @click="updateUserInfo"
+            :class="!isUpdated ? 'bg-gray-200' : 'bg-primary'"
+            class="flex items-center text-white border rounded-md ml-3 px-3 py-[6px]"
+          >
             <span class="mx-4 font-medium text-normal">Applay</span>
           </button>
         </div>
 
         <div id="CropperButtons" v-else class="flex items-center justify-end">
-          <button @click="uploadedImage = null" class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg">
+          <button
+            @click="uploadedImage = null"
+            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg"
+          >
             <span class="px-2 font-medium text-normal">Cancel</span>
           </button>
 
-          <button @click="cropAndUpdateImage" class="flex items-center bg-primary text-white border rounded-md ml-3 px-3 py-[6px]">
+          <button
+            @click="cropAndUpdateImage"
+            class="flex items-center bg-primary text-white border rounded-md ml-3 px-3 py-[6px]"
+          >
             <span class="mx-4 font-medium text-normal">Applay</span>
           </button>
         </div>

@@ -7,7 +7,7 @@ let isRegister = ref(true)
 <template>
   <div
     id="AuthOverlay"
-    class="fixed flex items-center justify-center z-50 top-0 left-0 w-full h-full bg-black/50"
+    class="fixed flex items-center justify-center z-40 top-0 left-0 w-full h-full bg-black/50"
   >
   <div class="relative bg-white w-full max-w-[470px] h-[70%] p-4 rounded-lg">
     <div class="flex w-full justify-end">

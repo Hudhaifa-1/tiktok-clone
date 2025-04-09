@@ -14,16 +14,16 @@ const isVideoLoaded = () => {
   if (video.value) {
     video.value.load();
 
-    videoListener = (e) => {
-      if (e.target) {
+    // videoListener = (e) => {
+    //   if (e.target) {
         setTimeout(() => {
           isLoaded.value = true;
         }, 200);
-      }
+      // }
     };
 
-    video.value.addEventListener("loadeddata", videoListener);
-  }
+    // video.value.addEventListener("loadeddata", videoListener);
+  // }
 };
 
 const isHover = (bool) => {
@@ -49,10 +49,12 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  video.value.removeEventListener("loadeddata", videoListener);
+  // video.value.removeEventListener("loadeddata", videoListener);
+ if(video.value){
   video.value.pause();
   video.value.currentTime = 0;
   video.value.src = "";
+ }
 });
 </script>
 
@@ -76,8 +78,8 @@ onBeforeUnmount(() => {
     <div>
       <video
         ref="video"
-        muted
         loop
+        muted
         class="aspect-[3/4] object-cover rounded-md"
         :src="post.video"
       ></video>

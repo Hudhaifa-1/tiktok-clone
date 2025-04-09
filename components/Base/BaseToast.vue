@@ -1,6 +1,6 @@
 <script setup>
-const props = defineProps(["error"]);
-const { error } = toRefs(props);
+const { $generalStore } = useNuxtApp();
+const {error } = storeToRefs($generalStore);
 
 let isErrorVisible = ref(false);
 let errorTimout = ref("");
@@ -11,6 +11,7 @@ const timoutErrorVisibility = () => {
     clearTimeout(errorTimout.value);
     errorTimout.value = setTimeout(() => {
       isErrorVisible.value = false;
+      error.value = null
     }, 3000);
   }
 };

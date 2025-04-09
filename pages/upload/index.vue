@@ -15,6 +15,9 @@ let fileData = ref(null);
 let errors = ref(null);
 let isUploading = ref(false);
 
+definePageMeta({middleware: 'auth'})
+
+
 watch(
   () => caption.value,
   (caption) => {
@@ -169,7 +172,7 @@ const clearVideo = () => {
             :src="fileDisplay"
           />
           <div
-            class="absolute -bottom-12 flex items-center justify-between z-50 rounded-xl border w-full p-2 border-gray_border"
+            class="absolute -bottom-12 flex items-center justify-between z-40 rounded-xl border w-full p-2 border-gray_border"
           >
             <div class="flex items-center truncate">
               <Icon

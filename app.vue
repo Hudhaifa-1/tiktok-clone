@@ -5,7 +5,7 @@ import BaseToast from "./components/Base/BaseToast.vue";
 const { $generalStore, $userStore } = useNuxtApp();
 const { isLoginOpen, isEditProfileOpen, error } = storeToRefs($generalStore);
 
-const prepareApp = async ()=> {
+const prepareApp = async () => {
   $generalStore.bodySwitch(false);
   isLoginOpen.value = false;
   isEditProfileOpen.value = false;
@@ -16,13 +16,26 @@ const prepareApp = async ()=> {
     if ($userStore.id) {
       $userStore.getUser();
     }
-  } catch (error) {
-    error.value = error.response.data.errors[0]
+  } catch (e) {
+    error.value = e.response.data.message
+      ? e.response.data.message
+      : e.response.data.error;
   }
-}
+};
+
+const getRandomUsers = () => {
+  try {
+    $generalStore.getRandomUsers();
+  } catch (e) {
+    error.value = e.response.data.message
+      ? e.response.data.message
+      : e.response.data.error;
+  }
+};
 
 onMounted(() => {
-  prepareApp()
+  prepareApp();
+  getRandomUsers();
 });
 
 watch(
@@ -37,7 +50,7 @@ watch(
 
 <template>
   <NuxtPage />
-  <BaseToast :error="error" />
+  <BaseToast />
   <AuthOverlay v-if="isLoginOpen" />
   <EditProfileOverlay v-if="isEditProfileOpen" />
 </template>

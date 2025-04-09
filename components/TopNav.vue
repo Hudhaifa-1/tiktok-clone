@@ -64,7 +64,7 @@ onMounted(()=> {
       <div
         class="flex items-center justify-end gap-3 min-w-[275px] max-w-[320px] w-full"
       >
-        <NuxtLink to="/upload">
+        <NuxtLink>
           <button
           @click="isLoggedIn"
             class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray_hover_bg"

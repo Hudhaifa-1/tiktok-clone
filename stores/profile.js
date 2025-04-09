@@ -25,6 +25,16 @@ export const useProfileStore = defineStore("profile", {
       this.$state.image = res.data.user[0].image;
 
       this.$state.posts = res.data.posts;
+
+      this.getAllLikes()
+    },
+
+    getAllLikes() {
+      this.allLikes = 0;
+      for (let i = 0; i < this.posts.length; i++) {
+        const post = this.posts[i];
+        this.allLikes += post.likes?.length;
+      }
     },
 
     resetUser() {

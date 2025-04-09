@@ -10,6 +10,8 @@ export default {
         gray_bg: '#F1F1F2',
         primary_hover_bg: '#e52c54',
         gray_hover_bg: '#f3f4f6',
+        error: '#ef4444',
+        success: '#04a777',
 
         //# fonts
         black_font: "#000000",

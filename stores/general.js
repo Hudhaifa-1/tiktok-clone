@@ -4,6 +4,7 @@ import axios from "~/plugins/axios";
 
 const $axios = axios().provide.axios;
 
+
 export const useGeneralStore = defineStore("general", {
   state: () => ({
     isLoginOpen: false,
@@ -19,8 +20,6 @@ export const useGeneralStore = defineStore("general", {
 
   actions: {
     bodySwitch(val) {
-      console.log(val);
-
       if (val) {
         document.body.style.overflow = "hidden";
         return;
@@ -32,15 +31,22 @@ export const useGeneralStore = defineStore("general", {
       this.isBackUrl = url;
     },
 
-    updateSideMenuImage(array, user) {
-      if (array) {
-        for (let i = 0; i < array.length; i++) {
-          const res = array[i];
-          if (res.id == user.id) {
-            res.image = user.image;
-          }
-        }
-      }
+    async getRandomUsers() {
+      let res = await $axios.get("api/get-random-users");
+      this.$state.suggested = res.data.suggested;
+      this.$state.following = res.data.following;
+    },
+
+    async getAllUsersAndPosts(){
+      let res = await $axios.get('/api/home')
+      this.$state.posts = res.data
+    },
+
+    async getPostById(id){
+      let res = await $axios.get(`/api/posts/${id}`)
+
+      this.$state.selectedPost = res.data.post[0]
+      this.$state.ids = res.data.ids
     },
 
     async hasSessionExpired() {
@@ -50,7 +56,7 @@ export const useGeneralStore = defineStore("general", {
           return response;
         },
         (error) => {
-          switch (error.response.status) {
+          switch (error?.response?.status) {
             case 401: // Not logged in
             case 419: // Session expired
             case 503: // Down for maintenace

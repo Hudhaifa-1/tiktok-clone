@@ -7,6 +7,9 @@ const { posts } = storeToRefs($profileStore);
 
 const route = useRoute();
 
+definePageMeta({middleware: 'auth'})
+
+
 let show = ref(false);
 
 const getProfile = async () => {
@@ -19,17 +22,20 @@ onMounted(() => {
   getProfile();
 });
 
-watch(()=> posts.value, ()=> {
+watch(
+  () => posts.value,
+  () => {
     setTimeout(() => {
-        show.value = true
+      show.value = true;
     }, 300);
-})
+  }
+);
 </script>
 
 <template>
   <MainLayout>
     <div
-    v-if="$profileStore.name"
+      v-if="$profileStore.name"
       class="pt-[90px] 2xl:pl-[185px] lg:pl-[140px] lg:pr-0 pr-2 w-[calc(100%-90px)] max-w-[1800px] 2xl:mx-auto"
     >
       <div class="flex md:w-[calc(100vw-240px)]">
@@ -38,7 +44,9 @@ watch(()=> posts.value, ()=> {
           :image-src="$profileStore.image"
         />
         <div class="ml-5 w-full">
-          <div class="text-[30px] font-bold truncate">{{ $profileStore.name }}</div>
+          <div class="text-[30px] font-bold truncate">
+            {{ $profileStore.name }}
+          </div>
           <div class="text-[18px] truncate">{{ $profileStore.name }}</div>
           <button
             v-if="$profileStore.id === $userStore.id"
@@ -71,15 +79,15 @@ watch(()=> posts.value, ()=> {
           >
         </div>
         <div class="mr-4">
-          <span class="font-bold">3K</span>
+          <span class="font-bold">{{ $profileStore.allLikes }}</span>
           <span class="text-gray-500 font-light text-normal pl-1.5">Likes</span>
         </div>
       </div>
 
       <div
-        class="pt-4 mr-4 text-gray-500 font-light text-normal pl-1.5 max-w-[500px]"
+        class="pt-4 mr-4 text-gray-500 font-light text-normal pl-1.5 max-w-[500px] break-all"
       >
-       {{ $profileStore.bio }}
+        {{ $profileStore.bio }}
       </div>
 
       <div class="w-full flex items-center pt-4 border-b">
@@ -97,12 +105,15 @@ watch(()=> posts.value, ()=> {
       </div>
 
       <div
+        v-if="show"
         class="mt-4 grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3"
       >
-      <div v-if="show" >
-        <PostUser v-for="post in $profileStore.posts" :key="post.id" :post="post"/>
-      </div>
+        <PostUser
+          v-for="post in $profileStore.posts"
+          :key="post.id"
+          :post="post"
+        />
       </div>
     </div>
   </MainLayout>
-</template>
+</template> 
