@@ -4,7 +4,7 @@ import Avatar from "./Avatar.vue";
 const { $userStore, $generalStore } = useNuxtApp();
 const showMenu = ref(false);
 const route = useRoute();
-const router = useRouter();
+const router = useRouter(); 
 
 const isLoggedIn = () => {
   if ($userStore.id) {
