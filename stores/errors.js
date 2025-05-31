@@ -6,7 +6,7 @@ export const useErrorsStore = defineStore('errors', {
         email: []
       },
       registerErrors: {
-        name: [], 
+        name: [],
         email: [],
         password: []
       }
